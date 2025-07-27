@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Alarm Clock</title>
+  <style>
+    body {
+      background-color: #0f172a;
+      font-family: Arial, sans-serif;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .alarm-box {
+      background-color: #1e293b;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 0 15px rgba(0, 255, 255, 0.2);
+      width: 360px;
+      text-align: center;
+    }
+
+    h2 {
+      margin-bottom: 10px;
+      color: #38bdf8;
+    }
+
+    #current-time {
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 8px;
+      border: none;
+      font-size: 16px;
+    }
+
+    input[type="file"] {
+      background-color: #334155;
+      color: white;
+    }
+
+    button {
+      background-color: #0ea5e9;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0284c7;
+    }
+
+    .test-button {
+      background-color: #22d3ee;
+    }
+
+    .test-button:hover {
+      background-color: #0e7490;
+    }
+  </style>
+</head>
+<body>
+
+<div class="alarm-box">
+  <h2>Klock by Thirumaleswari</h2>
+  <div id="current-time">Loading time...</div>
+
+  <input type="time" id="alarm-time">
+  <input type="file" id="alarm-sound" accept="audio/*">
+  <button onclick="setAlarm()">Set Alarm</button>
+  <button onclick="clearAlarm()">Clear Alarm</button>
+  <button class="test-button" onclick="playSound()">Test Sound</button>
+
+  <audio id="audio-player"></audio>
+</div>
+
+<script>
+  let alarmTime = null;
+  let alarmSet = false;
+  let customAudioURL = null;
+
+  const audio = document.getElementById('audio-player');
+  const fileInput = document.getElementById('alarm-sound');
+
+  function updateTime() {
+    const now = new Date();
+    const timeString = now.toTimeString().slice(0, 5);
+    document.getElementById('current-time').innerText = now.toLocaleTimeString();
+
+    if (alarmSet && timeString === alarmTime) {
+      playSound();
+      alert("⏰ Alarm ringing!");
+      alarmSet = false;
+    }
+  }
+
+  setInterval(updateTime, 1000);
+
+  function setAlarm() {
+    const input = document.getElementById('alarm-time').value;
+    if (input === "") {
+      alert("Please select a time");
+      return;
+    }
+    alarmTime = input;
+    alarmSet = true;
+    alert("Alarm set for " + alarmTime);
+  }
+
+  function clearAlarm() {
+    alarmTime = null;
+    alarmSet = false;
+    audio.pause();
+    audio.currentTime = 0;
+    alert("Alarm cleared");
+  }
+
+  function playSound() {
+    if (fileInput.files.length > 0) {
+      const file = fileInput.files[0];
+      customAudioURL = URL.createObjectURL(file);
+      audio.src = customAudioURL;
+    } else {
+      // fallback alarm sound
+      audio.src = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3";
+    }
+    audio.play();
+  }
+</script>
+
+</body>
+</html>
